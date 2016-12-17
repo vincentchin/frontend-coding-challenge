@@ -1,21 +1,41 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+
+import Api from './constants/api';
+import EventList from './components/EventList';
+
+import 'whatwg-fetch';
 import './App.css';
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
+    constructor(props){
+        super(props);
+        this.state = {
+            events: [],
+        }
+    }
+
+    componentDidMount() {
+        let resource = Api.url,
+            obj = {
+                headers: { 'Authorization': 'Token ' + Api.token }
+            }
+
+        fetch(resource, obj)
+            .then((response) => {
+                return response.json()
+            })
+            .then((data) => {
+                this.setState({events: data.results})
+            })
+    }
+
+    render() {
+        return (
+            <div className="App">
+                <EventList events={this.state.events} />
+            </div>
+        );
+    }
 }
 
 export default App;
